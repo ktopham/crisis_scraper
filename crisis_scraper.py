@@ -27,7 +27,11 @@ def make_filename(vol, num):
 def get_volno(volno_date_string):
     volno_string = volno_date_string[volno_date_string.find("Vol."):volno_date_string.find("(")]
     vol = volno_date_string[volno_date_string.find("Vol.")+5:volno_date_string.find(",")]
+    if len(vol)<2:
+        vol = '0'+ vol
     no =  volno_date_string[volno_date_string.find("No.")+4:volno_date_string.find("(")-1]
+    if len(no)<2:
+        no = '0'+ no
     return (volno_string, vol, no)
 
 def get_date(volno_string):
@@ -72,14 +76,14 @@ def get_dicts():
     return list_of_dicts
 
 
-def get_pdf(id):
+def get_pdf(filename, id):
     #input: id number for an issue of the crisis
     # downloads that pdf in local folder
     file_url = "https://repository.library.brown.edu/studio/item/bdr:{}/PDF/".format(id)
 
     r = requests.get(file_url, stream = True)
-
-    with open("./issue_pdfs/vol{}no{}.pdf".format(),"wb") as pdf:
+    filename = "./issue_pdfs/" + filename
+    with open(filename,"wb") as pdf:
         for chunk in r.iter_content(chunk_size=1024):
 
              # writing one chunk at a time to pdf file
@@ -87,5 +91,7 @@ def get_pdf(id):
                  pdf.write(chunk)
     #returns: nothing
 
-list_of_dicts = get_dicts()
-print(list_of_dicts[0]['date_issued'])
+if __name__ == '__main__':
+    list_of_dicts = get_dicts()
+    for dict in list_of_dicts:
+        get_pdf(dict['filename'], dict['issue_id'])
