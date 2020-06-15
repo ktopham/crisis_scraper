@@ -1,6 +1,7 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+import csv
 
 CACHE_FNAME = 'crisis_cache.json'
 try:
@@ -91,7 +92,27 @@ def get_pdf(filename, id):
                  pdf.write(chunk)
     #returns: nothing
 
+def make_metadata(list_of_dicts):
+    #input: a list of dictionaries
+    #makes a csv of metadata
+    with open("./issue_pdfs/metadata.csv", "w", encoding="utf-8") as fout:
+        csvwriter = csv.writer(fout)
+        csvwriter.writerow(["filename", "issue_id", "date_issued", "volno_string", "volume", "number"])
+        for dict in list_of_dicts:
+            row = []
+            row.append(dict["filename"])
+            row.append(dict["issue_id"])
+            row.append(dict["date_issued"])
+            row.append(dict["volno_string"])
+            row.append(dict["vol"])
+            row.append(dict["no"])
+            csvwriter.writerow(row)
+            print(row[0])
+
+
 if __name__ == '__main__':
     list_of_dicts = get_dicts()
     for dict in list_of_dicts:
         get_pdf(dict['filename'], dict['issue_id'])
+
+    make_metadata(list_of_dicts)
