@@ -155,18 +155,27 @@ if __name__ == '__main__':
     issue_dict_list = get_dicts()
     issues_dict = {}
     for dictionary in issue_dict_list:
-        # issue_dict = {}
-        # issue_dict['date_issued'] = d['date_issued']
         issues_dict[dictionary['issue_id']] = dict(date_issued=dictionary['date_issued'], volno_string=dictionary['volno_string'],vol=dictionary['vol'], no=dictionary['vol'])
 
-    # scrape_mods("507789")
     all_articles = []
-    # for k in issues_dict.keys():
-    #     scrape_mods(k)
+    welcome_string = "What would you like to do? \nXML files must be generated before parsing XML and creating metadata. \nXML must always be parsed before metadata is created.\n"
+    welcome_string += "Available commands:\n"
+    welcome_string += "\tscrape_mods \n\t\t- scrapes the Crisis collection for MODS records.\n"
+    welcome_string += "\tparse_xml \n\t\t- parses the XML records and stores the article metadata in a dictionary.\n"
+    welcome_string += "\tcreate_metadata \n\t\t- outputs the data created by parse_xml into a csv.\n"
+    while True:
+        proceed = input(welcome_string)
+        if proceed == "scrape_mods":
+            for k in issues_dict.keys():
+                scrape_mods(k)
 
-    for k in issues_dict.keys():
-        issue_articles = parseXML(k, issues_dict)
-        all_articles += issue_articles
+        if proceed == "parse_xml":
+            for k in issues_dict.keys():
+                issue_articles = parseXML(k, issues_dict)
+                all_articles += issue_articles
 
-    make_artice_metadata(all_articles)
-    # parseXML("507789", issues_dict)
+        if proceed == "create_metadata":
+            make_artice_metadata(all_articles)
+        proceed = input("continue?[Y/N] ")
+        if proceed.lower() == "n" or proceed.lower() == "no":
+            break
